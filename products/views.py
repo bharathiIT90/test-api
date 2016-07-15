@@ -10,6 +10,7 @@ from .models import Product
 
 class ProductListView(ListView):
 	model = Product
+	queryset = Product.objects.all().active()
 
 	def get_context_data(self,*args,**kwargs):
 		context = super(ProductListView, self).get_context_data(*args,**kwargs)
