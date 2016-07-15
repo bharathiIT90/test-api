@@ -1,0 +1,24 @@
+Searching 70 files for "MVP Landing"
+
+/Users/bharu_sathya/Desktop/onlineshop/src/templates/base.html:
+   12      <link rel="icon" href="../../favicon.ico">
+   13  
+   14:     <title>{% block head_title %}Grogeous Shoppe{% endblock %}</title>
+   15  
+   16      {% include 'head_css.html' %}
+
+/Users/bharu_sathya/Desktop/onlineshop/src/templates/example_text.txt:
+    1  Example Text
+    2  
+    3: The MVP Landing project is designed to get your project started. The goal is to help you launch as soon as possible with the least amount of investment using time or money. Join Us today.
+    4  
+    5  Built with Django & Bootstrap
+
+/Users/bharu_sathya/Desktop/onlineshop/src/templates/home.html:
+   30  		<div class='col-sm-6'>
+   31  		<h1>Try Django 1.8</h1>
+   32: 		<p>The MVP Landing project is designed to get your project started. The goal is to help you launch as soon as possible with the least amount of investment using time or money. Join Us today.</p>
+   33  		<p>
+   34  		<a class="btn btn-lg btn-primary" href="" role="button">Join Us &raquo;</a>
+
+3 matches across 3 files
