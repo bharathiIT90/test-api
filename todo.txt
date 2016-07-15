@@ -1,5 +1,5 @@
 
-1. Products
+1. Products(physical)
 	--> Single product (detail view)
 		-->Social sharing buttons
 	--> List product (list view)
