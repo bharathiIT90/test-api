@@ -37,7 +37,7 @@ class Variation(models.Model):
 	price = models.DecimalField(decimal_places=2,max_digits=20)
 	sale_price = models.DecimalField(decimal_places=2,max_digits=20,null = True,blank = True)
 	active = models.BooleanField(default=True)
-	inventory = models.IntegerField(default = "-1", null = True,blank = True)
+	inventory = models.IntegerField(null = True,blank = True)
 
 	def __unicode__(self):
 		return self.title
