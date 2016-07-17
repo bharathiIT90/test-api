@@ -1,5 +1,37 @@
 {% extends "base.html" %}
 
+<script>
+    
+{% block jquery %}
+
+function setPrice(){
+	var price = $(".variation_select option:selected").attr("data-price")
+
+	var sale_price = $(".variation_select option:selected").attr("data-sale-price")
+	if(sale_price!="" && sale_price!="None" && sale_price!= null){
+		$("#price").html("<h3>" + sale_price + " <small style= 'color:red;text-decoration:line-through;'> Original Price: " + price + "</small></h3>");
+	} else{
+		$("#price").html(price);
+	}	
+
+}
+
+setPrice()
+
+$(".variation_select").change(function(){
+	setPrice()
+	
+
+	// var img = $(".variation_select option:selected").attr("data-img")
+	// $("img").attr("src", img);
+})
+
+
+{% endblock %}
+    
+
+</script>
+
 {% block content %}
 <div class='row'>
 <div class ='col-sm-8'>
@@ -23,14 +55,14 @@
 <!--Product side bar -->
 <div class = 'col-sm-4'>
 
-<h3>{{ object.price }}</h3>
+<h3 id='price'>{{ object.price }}</h3>
 {% if object.variation_set.count > 1 %}
 
-<select class='form-control'>
+<select class='form-control variation_select'>
 
 {% for vari_obj in object.variation_set.all %}
 
-<option value ="{{ vari_obj.id }}">{{ vari_obj }} </option>
+<option data-sale-price="{{ vari_obj.sale_price }}"data-price="{{ vari_obj.price }}" value ="{{ vari_obj.id }}">{{ vari_obj }} </option>
 
 
 {% endfor %}
