@@ -1,14 +1,18 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.base import View
-from django.views.generic.detail import SingleObjectMixin
-
+from django.views.generic.detail import SingleObjectMixin, DetailView
+from django.views.generic.edit import FormMixin
 
 # Create your views here.
 
+from orders.forms import GuestCheckoutForm
 from products.models import Variation
-from carts.models import Cart, CartItem
+
+
+from .models import Cart, CartItem
 
 
 class ItemCountView(View):
@@ -120,5 +124,47 @@ class CartView(SingleObjectMixin, View):
 		}
 		template = self.template_name
 		return render(request, template, context)
+
+
+
+class CheckoutView(FormMixin, DetailView):
+	model = Cart
+	template_name = "carts/checkout_view.html"
+	form_class = GuestCheckoutForm
+
+	def get_object(self, *args, **kwargs):
+		cart_id = self.request.session.get("cart_id")
+		if cart_id == None:
+			return redirect("cart")
+		cart = Cart.objects.get(id=cart_id)
+		return cart
+
+	def get_context_data(self, *args, **kwargs):
+		context = super(CheckoutView, self).get_context_data(*args, **kwargs)
+		user_can_continue = False
+		if not self.request.user.is_authenticated():# or if request.user.is_guest:
+			context["login_form"] = AuthenticationForm()
+			context["next_url"] = self.request.build_absolute_uri()
+		if self.request.user.is_authenticated(): #or if request.user.is_guest():
+			user_can_continue = True
+		context["user_can_continue"] = user_can_continue
+		context["form"] = self.get_form()
+		return context
+
+	def post(self, request, *args, **kwargs):
+		form = self.get_form()
+		if form.is_valid():
+			print form.cleaned_data.get("email")
+			return self.form_valid(form)
+		else:
+			return self.form_invalid(form)
+
+	def get_success_url(self):
+		return reverse("checkout")
+
+
+
+
+
 
 
