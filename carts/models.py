@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from products.models import Variation
 # Create your models here.
@@ -13,7 +14,11 @@ class CartItem(models.Model):
 	def __unicode__(self):
 		return self.item.title
 
+	def remove(self):
+		return  self.item.remove_from_cart()
 
+	def get_title(self):
+		return "%s-%s" %(self.item.product.title, self.item.title)
 
 
 class Cart(models.Model):
