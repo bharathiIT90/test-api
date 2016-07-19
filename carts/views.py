@@ -12,12 +12,11 @@ from carts.models import Cart, CartItem
 
 
 class ItemCountView(View):
-	def get(self,request,*args,**kwargs):
+	def get(self, request, *args, **kwargs):
 		if request.is_ajax():
 			cart_id = self.request.session.get("cart_id")
-
 			if cart_id == None:
-				count = 0 
+				count = 0
 			else:
 				cart = Cart.objects.get(id=cart_id)
 				count = cart.items.count()
@@ -25,6 +24,8 @@ class ItemCountView(View):
 			return JsonResponse({"count": count})
 		else:
 			raise Http404
+
+
 
 class CartView(SingleObjectMixin, View):
 	model = Cart
@@ -35,6 +36,7 @@ class CartView(SingleObjectMixin, View):
 		cart_id = self.request.session.get("cart_id")
 		if cart_id == None:
 			cart = Cart()
+			cart.tax_percentage = 0.075
 			cart.save()
 			cart_id = cart.id
 			self.request.session["cart_id"] = cart_id
@@ -85,6 +87,16 @@ class CartView(SingleObjectMixin, View):
 				subtotal = None
 
 			try:
+				cart_total = cart_item.cart.total
+			except:
+				cart_total = None
+
+			try:
+				tax_total = cart_item.cart.tax_total
+			except:
+				tax_total = None
+
+			try:
 				total_items = cart_item.cart.items.count()
 			except:
 				total_items = 0
@@ -94,6 +106,8 @@ class CartView(SingleObjectMixin, View):
 					"item_added": item_added,
 					"line_total": total,
 					"subtotal": subtotal,
+					"cart_total": cart_total,
+					"tax_total": tax_total,
 					"flash_message": flash_message,
 					"total_items": total_items
 					}
