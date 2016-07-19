@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
 
-
 <script>
 {% block jquery %}
+
+
 function setPrice(){
 	var price = $(".variation_select option:selected").attr("data-price")
+
 	var sale_price = $(".variation_select option:selected").attr("data-sale-price")
 	if (sale_price != "" && sale_price != "None" && sale_price != null ) {
 	$("#price").html("<h3>" + sale_price + " <small class='og-price'>" + price  + "</small></h3>");
@@ -14,11 +16,18 @@ function setPrice(){
 	}
 }
 setPrice()
+
 $(".variation_select").change(function(){
 	setPrice()
 	// var img = $(".variation_select option:selected").attr("data-img")
 	// $("img").attr("src", img);
+
 })
+
+
+
+// ajax add to cart
+
 $("#submit-btn").click(function(event){
 	event.preventDefault();
 	var formData = $("#add-form").serialize();
@@ -28,7 +37,7 @@ $("#submit-btn").click(function(event){
 		url: "{% url 'cart' %}",
 		data: formData,
 		success: function(data) {
-			$("#jquery-message").text("Added " + data.item_added + " Deleted " + data.deleted)
+			showFlashMessage(data.flash_message);
 		}, 
 		error: function(response, error) {
 			// console.log(response)
@@ -36,13 +45,20 @@ $("#submit-btn").click(function(event){
 			$("#add-form").submit()
 		}
 	})
+
 	// $("#add-form").submit()
+
 })
+
+
+
 {% endblock %}
 </script>
 
 
 {% block content %}
+
+
 <div class='row'>
 
 <div class='col-sm-8'>

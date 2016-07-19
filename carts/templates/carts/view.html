@@ -5,6 +5,7 @@
 {% block jquery %}
 $(".item-qty").change(function(){
 	// $(this).next(".btn-update").fadeIn();
+
 	// event.preventDefault();
 	// .prev(h1)
 	var item = $(this).prev("input[type='hidden']").val();
@@ -26,14 +27,29 @@ $(".item-qty").change(function(){
 				$("#item-line-total-"+item).text(data.line_total);
 				$("#subtotal").text(data.subtotal);
 			}
-		}, 
+			var message = ""
+			if (data.item_added) {
+				message = "New item added"
+			} else if (data.deleted){
+				message = "Item removed"
+			} else {
+				message = "Item updated"
+			}
+			showFlashMessage(message);
+			}, 
 		error: function(response, error) {
 			// console.log(response)
 			// console.log(error)
 			$("#add-form").submit()
 		}
 	})
+
+
+
+
+
 });
+
 {% endblock %}
 </script>
 
