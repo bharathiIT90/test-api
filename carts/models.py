@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.db import models
 from products.models import Variation
 # Create your models here.
@@ -35,8 +35,7 @@ def cart_item_post_save_receiver(sender, instance, *args, **kwargs):
 
 post_save.connect(cart_item_post_save_receiver, sender=CartItem)
 
-
-
+post_delete.connect(cart_item_post_save_receiver,sender=CartItem)
 
 class Cart(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,null=True, blank=True)
