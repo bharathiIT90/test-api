@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('price', models.DecimalField(max_digits=20, decimal_places=2)),
                 ('sale_price', models.DecimalField(null=True, max_digits=20, decimal_places=2, blank=True)),
                 ('active', models.BooleanField(default=True)),
-                ('inventory', models.IntegerField(default=b'-1', null=True, blank=True)),
+                ('inventory', models.IntegerField(null=True, blank=True)),
                 ('product', models.ForeignKey(to='products.Product')),
             ],
         ),

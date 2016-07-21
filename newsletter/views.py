@@ -9,19 +9,21 @@ from .models import SignUp
 # Create your views here.
 def home(request):
 	title = 'Sign Up Now'
+
 	featured_image = ProductFeatured.objects.filter(active=True).order_by("?").first()
 	products = Product.objects.all().order_by("?")[:6]
 	products2 = Product.objects.all().order_by("?")[:6]
-
 
 	form = SignUpForm(request.POST or None)
 	context = {
 		"title": title,
 		"form": form,
-		"featured_image": featured_image,
+		"featured_image":featured_image,
 		"products":products,
 		"products2":products2
 	}
+
+
 	if form.is_valid():
 		#form.save()
 		#print request.POST['email'] #not recommended
@@ -37,6 +39,7 @@ def home(request):
 		context = {
 			"title": "Thank you"
 		}
+
 	return render(request, "home.html", context)
 
 

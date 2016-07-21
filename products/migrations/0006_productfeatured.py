@@ -8,7 +8,7 @@ import products.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0005_auto_20160717_0213'),
+        ('products', '0005_auto_20150820_2238'),
     ]
 
     operations = [

@@ -1,3 +1,7 @@
+import braintree
+
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404, JsonResponse
@@ -9,11 +13,24 @@ from django.views.generic.edit import FormMixin
 # Create your views here.
 
 from orders.forms import GuestCheckoutForm
-from orders.models import UserCheckout
+from orders.mixins import CartOrderMixin
+from orders.models import UserCheckout, Order, UserAddress
+
 from products.models import Variation
 
 
 from .models import Cart, CartItem
+
+
+
+
+if settings.DEBUG:
+	braintree.Configuration.configure(braintree.Environment.Sandbox,
+      merchant_id=settings.BRAINTREE_MERCHANT_ID,
+      public_key=settings.BRAINTREE_PUBLIC,
+      private_key=settings.BRAINTREE_PRIVATE)
+
+
 
 
 class ItemCountView(View):
@@ -128,35 +145,43 @@ class CartView(SingleObjectMixin, View):
 
 
 
-class CheckoutView(FormMixin, DetailView):
+
+class CheckoutView(CartOrderMixin, FormMixin, DetailView):
 	model = Cart
 	template_name = "carts/checkout_view.html"
 	form_class = GuestCheckoutForm
 
 	def get_object(self, *args, **kwargs):
-		cart_id = self.request.session.get("cart_id")
-		if cart_id == None:
-			return redirect("cart")
-		cart = Cart.objects.get(id=cart_id)
+		cart = self.get_cart()
+		if cart == None:
+			return None
 		return cart
 
 	def get_context_data(self, *args, **kwargs):
 		context = super(CheckoutView, self).get_context_data(*args, **kwargs)
 		user_can_continue = False
 		user_check_id = self.request.session.get("user_checkout_id")
-		if not self.request.user.is_authenticated() or user_check_id == None:# or if request.user.is_guest:
-			context["login_form"] = AuthenticationForm()
-			context["next_url"] = self.request.build_absolute_uri()
-		elif self.request.user.is_authenticated() or user_check_id != None:
-			user_can_continue = True
-			#return redirect "address select view"
-		else:
-			pass
 		if self.request.user.is_authenticated():
+			user_can_continue = True
 			user_checkout, created = UserCheckout.objects.get_or_create(email=self.request.user.email)
 			user_checkout.user = self.request.user
 			user_checkout.save()
+			context["client_token"] = user_checkout.get_client_token()
 			self.request.session["user_checkout_id"] = user_checkout.id
+		elif not self.request.user.is_authenticated() and user_check_id == None:
+			context["login_form"] = AuthenticationForm()
+			context["next_url"] = self.request.build_absolute_uri()
+		else:
+			pass
+
+		if user_check_id != None:
+			user_can_continue = True
+			if not self.request.user.is_authenticated(): #GUEST USER
+				user_checkout_2 = UserCheckout.objects.get(id=user_check_id)
+				context["client_token"] = user_checkout_2.get_client_token()
+		
+		#if self.get_cart() is not None:
+		context["order"] = self.get_order()
 		context["user_can_continue"] = user_can_continue
 		context["form"] = self.get_form()
 		return context
@@ -174,6 +199,71 @@ class CheckoutView(FormMixin, DetailView):
 
 	def get_success_url(self):
 		return reverse("checkout")
+
+
+	def get(self, request, *args, **kwargs):
+		get_data = super(CheckoutView, self).get(request, *args, **kwargs)
+		cart = self.get_object()
+		if cart == None:
+			return redirect("cart")
+		new_order = self.get_order()
+		user_checkout_id = request.session.get("user_checkout_id")
+		if user_checkout_id != None:
+			user_checkout = UserCheckout.objects.get(id=user_checkout_id)
+			if new_order.billing_address == None or new_order.shipping_address == None:
+			 	return redirect("order_address")
+			new_order.user = user_checkout
+			new_order.save()
+		return get_data
+
+
+
+
+
+
+class CheckoutFinalView(CartOrderMixin, View):
+	def post(self, request, *args, **kwargs):
+		order = self.get_order()
+		order_total = order.order_total
+		nonce = request.POST.get("payment_method_nonce")
+		if nonce:
+			result = braintree.Transaction.sale({
+			    "amount": order_total,
+			    "payment_method_nonce": nonce,
+			    "billing": {
+				    "postal_code": "%s" %(order.billing_address.zipcode),
+				    
+				 },
+			    "options": {
+			        "submit_for_settlement": True
+			    }
+			})
+			if result.is_success:
+				#result.transaction.id to order
+				order.mark_completed(order_id=result.transaction.id)
+				messages.success(request, "Thank you for your order.")
+				del request.session["cart_id"]
+				del request.session["order_id"]
+			else:
+				#messages.success(request, "There was a problem with your order.")
+				messages.success(request, "%s" %(result.message))
+				return redirect("checkout")
+
+		return redirect("order_detail", pk=order.pk)
+
+	def get(self, request, *args, **kwargs):
+		return redirect("checkout")
+
+
+
+
+
+
+
+
+
+
+
 
 
 
