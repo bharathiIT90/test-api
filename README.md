@@ -1,5 +1,5 @@
 # GorgeousShoppe.com
-
+Know more about the developer on <a href="https://www.linkedin.com/in/bharathi-ranganathan">Linkedin</a><br/>
 A full stack online shopping web application which allows user to select their desired product, make payment and checkout. When the user logs into the application, they are able to choose the products from a list of products. The products are grouped according to various categories. The user is allowed to apply filters and make their selection. The application allows both guest user and registered user for checking out. The user also has freedom to choose a product from various options under each product. 
 
 <b>Technologies Used:</b><br/>
