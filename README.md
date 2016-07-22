@@ -1,1 +1,1 @@
-# gorgeousshoppe.com
+# GorgeousShoppe.com
