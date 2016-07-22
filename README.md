@@ -3,6 +3,18 @@ Know more about the developer on <a href="https://www.linkedin.com/in/bharathi-r
 
 A full stack online shopping web application which allows user to select their desired product, make payment and checkout. When the user logs into the application, they are able to choose the products from a list of products. The products are grouped according to various categories. The user is allowed to apply filters and make their selection. The application allows both guest user and registered user for checking out. The user also has freedom to choose a product from various options under each product. 
 
+<b>Features:<b><br/>
+1. Product selection according to different product variation. 
+2. Quantity selection and cart updation accordingly.
+3. Tax, shipping and order total calculations.
+4. Product category and price range filters.
+5. Guest User and registered User login.
+6. User Address and payment options.
+
+<b>Future Enhancements:<br/>
+1. Improving the front end UI by showing flashy product promotions that change every few seconds.
+2. Updating the product view to display different images for every product variations provided. 
+
 <b>Technologies Used:</b><br/>
 Python, Django framework, sqlite3, AJAX, Jquery, HTML, CSS, Bootstrap, Braintree for payment, Jquery flash messages.
 
