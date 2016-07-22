@@ -12,6 +12,23 @@ HTML, custom CSS paired with bootstrap is the main part of the Front end. Flash 
 <b>Back-end:</b><br/>
 Python runs the back end of GorgeousShoppe. Django web framework is used to create relations between different applications and databases. AJAX is used for querying the database to update the cart quickly once the quantity and product is updated. Braintree is used for providing payments options using paypal and credit card. 
 
+<b>Road Map:</b>
+1. Products (physical)
+	--> Single Product (detail view)
+		--> Social Sharing Buttons
+	--> List Product (list view)
+	--> Inventory Control + Viewable
+	--> Search Products
+
+2. Checkout
+	--> Cart (shopping cart)
+	--> Auth Users & Guest User (non-auth)
+	--> Shipping & Billing Address
+
+3. Payment
+	--> Integration with Braintree (steps on other integrations)
+Contact GitHub API Training Shop Blog About
+
 
 <h2>Exploration through GorgeousShoppe:</h2>
 
